@@ -46,6 +46,7 @@ class Mermi{
 }
 
 public class Oyun extends JPanel implements KeyListener,ActionListener{		
+																			
 	
 	Timer timer =new Timer(5,this);		//5 sn'de bir arkaplanın yeniden çizilmesi sağlandı.
 	
@@ -82,7 +83,7 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 		super.paint(g);
 		
 		g.drawImage(imageUzayGemisi,uzayGemisiX, 490, imageUzayGemisi.getWidth()/10, imageUzayGemisi.getHeight()/10,this);	    
-																										
+		
 		g.drawImage(imageUzayliUfo,uzayliGemisiX, 0, imageUzayliUfo.getWidth()/10, imageUzayliUfo.getHeight()/10,this);
 	}
 	
@@ -90,14 +91,14 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 
 	@Override
 	public void repaint() {						
-		
+												
 		super.repaint();						
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		uzayliGemisiX+=uzayliGemisidirX;				
-		if(uzayliGemisiX>=709) {				
+		uzayliGemisiX+=uzayliGemisidirX;				 
+		if(uzayliGemisiX>=709) {						//uzayli ufosunun sınırlara geldiği zaman yönünün değiştirilmesi sağlanıyor.
 			uzayliGemisidirX=-uzayliGemisidirX;		
 		}
 		if(uzayliGemisiX<=0) {
@@ -115,9 +116,36 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+		int c=e.getKeyCode();			
 		
+		if(c==KeyEvent.VK_LEFT)	{		//yön tuşları ile uzay gemimizin hareket ettiyoruz.
+			if(uzayGemisiX<=0) {		
+				uzayGemisiX=0;
+				return;
+			}
+			else {
+				uzayGemisiX-=dirUzayX;	
+			}
+			if(uzayGemisiX<10) {		//Bu kontrolu yapmamızın sebebi,uzay gemimiz tam 0. piksele yaklaşmadan bir önceki adımda uzay gemimizin bir kısmı ekran dışına taşıyor,bu hatayı bu kontrolle çözüyoruz.
+				uzayGemisiX=0;			
+			}
+			
+		}
+		else if(c==KeyEvent.VK_RIGHT) {
+			if(uzayGemisiX>=742) {
+				uzayGemisiX=742;
+				return;						
+			}
+			else {
+				uzayGemisiX+=dirUzayX;
+			}
+			if(uzayGemisiX>=732) {			
+				uzayGemisiX=742;
+			}
+		}
 	}
+		
+	
 
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -128,5 +156,7 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 
 	
 }
+
+
 
 
