@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 class Mermi{
 	private int x;		//merminin yönergesi
@@ -46,10 +47,13 @@ class Mermi{
 
 public class Oyun extends JPanel implements KeyListener,ActionListener{		
 	
+	Timer timer =new Timer(5,this);		//5 sn'de bir arkaplanın yeniden çizilmesi sağlandı.
+	
+	
 	private int gecenSure=0;			//topun vurulmasına kadar geçen süre
 	private int harcananMermi=0;			
 	private BufferedImage imageUzayGemisi;		
-	private BufferedImage imageUzayliUfo;		
+	private BufferedImage imageUzayliUfo;	
 	private ArrayList<Mermi> mermiler=new ArrayList<>();			//uzay gemisinden çıkan mermileri tutacak olan list
 	private int mermidirY=1;				//merminin piksel cinsinden hareket hızı
 	private int uzayliGemisiX=0;					//uyzayliGemisini koordinatı
@@ -69,7 +73,7 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 		
 		setBackground(Color.black);
 		
-		
+		timer.start();  		
 		
 	}
 
@@ -78,6 +82,7 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 		super.paint(g);
 		
 		g.drawImage(imageUzayGemisi,uzayGemisiX, 490, imageUzayGemisi.getWidth()/10, imageUzayGemisi.getHeight()/10,this);	    
+																										
 		g.drawImage(imageUzayliUfo,uzayliGemisiX, 0, imageUzayliUfo.getWidth()/10, imageUzayliUfo.getHeight()/10,this);
 	}
 	
@@ -85,13 +90,20 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 
 	@Override
 	public void repaint() {						
-												
+		
 		super.repaint();						
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		uzayliGemisiX+=uzayliGemisidirX;				
+		if(uzayliGemisiX>=709) {				
+			uzayliGemisidirX=-uzayliGemisidirX;		
+		}
+		if(uzayliGemisiX<=0) {
+			uzayliGemisidirX=-uzayliGemisidirX;
+		}
+		repaint();
 		
 	}
 
@@ -116,3 +128,5 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 
 	
 }
+
+
