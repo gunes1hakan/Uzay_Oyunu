@@ -16,6 +16,9 @@ import javax.imageio.stream.FileImageInputStream;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+
+
+
 class Mermi{
 	private int x;		//merminin yönergesi
 	private int y;
@@ -46,21 +49,20 @@ class Mermi{
 }
 
 public class Oyun extends JPanel implements KeyListener,ActionListener{		
-																			
 	
 	Timer timer =new Timer(5,this);		//5 sn'de bir arkaplanın yeniden çizilmesi sağlandı.
-	
 	
 	private int gecenSure=0;			//topun vurulmasına kadar geçen süre
 	private int harcananMermi=0;			
 	private BufferedImage imageUzayGemisi;		
 	private BufferedImage imageUzayliUfo;	
+	private BufferedImage imageBulletPlasmaCyan;		//mermi fotoğrafının değişkeni
 	private ArrayList<Mermi> mermiler=new ArrayList<>();			//uzay gemisinden çıkan mermileri tutacak olan list
 	private int mermidirY=1;				//merminin piksel cinsinden hareket hızı
-	private int uzayliGemisiX=0;					//uyzayliGemisini koordinatı
+	private int uzayliGemisiX=0;					//uzayliGemisini koordinatı
 	private int uzayliGemisidirX=2;				//uzayliGemisinin piksel cinsinden hareket hızı
 	private int uzayGemisiX=0;			//uzay Gemisinin x konumunu belirtiyoruz.
-	private int dirUzayX=20;			//uzay gemisnin piksel cinsinden hareket hızı
+	private int dirUzayX=20;			//uzay gemisinin piksel cinsinden hareket hızı
 	
 	
 
@@ -68,6 +70,7 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 		try {
 			imageUzayGemisi=ImageIO.read(new FileImageInputStream(new File("uzaygemisi.png")));		
 			imageUzayliUfo=ImageIO.read(new FileImageInputStream(new File("uzayliUfo.png")));
+			imageBulletPlasmaCyan=ImageIO.read(new FileImageInputStream(new File("bullet_plasma_cyan.png")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -82,23 +85,39 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 	public void paint(Graphics g) {
 		super.paint(g);
 		
+		for(Mermi mermi:mermiler) {			//ekranın dışına doğru çıkan ateşleri arrayList yapısından çıkarttık.
+			if(mermi.getY()<0) {
+				mermiler.remove(mermi);
+			}
+		}
+		
 		g.drawImage(imageUzayGemisi,uzayGemisiX, 490, imageUzayGemisi.getWidth()/10, imageUzayGemisi.getHeight()/10,this);	    
 		
 		g.drawImage(imageUzayliUfo,uzayliGemisiX, 0, imageUzayliUfo.getWidth()/10, imageUzayliUfo.getHeight()/10,this);
+		
+		for(Mermi mermi:mermiler) {			//mermilerin ekranda görünmesini sağladım.
+			g.drawImage(imageBulletPlasmaCyan,mermi.getX(), mermi.getY(), imageBulletPlasmaCyan.getWidth()/10, imageBulletPlasmaCyan.getHeight()/10,this);
+			
+		}
 	}
 	
 	
 
 	@Override
 	public void repaint() {						
-												
+		
 		super.repaint();						
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		uzayliGemisiX+=uzayliGemisidirX;				 
-		if(uzayliGemisiX>=709) {						//uzayli ufosunun sınırlara geldiği zaman yönünün değiştirilmesi sağlanıyor.
+		
+		for(Mermi mermi:mermiler) {					//mermilerin yukarı doğru hareket ettirilmesi sağlandı
+			mermi.setY(mermi.getY()-mermidirY);
+		}
+		
+		uzayliGemisiX+=uzayliGemisidirX;				
+		if(uzayliGemisiX>=709) {				//uzayli ufosunun sınırlara geldiği zaman yönünün değiştirilmesi sağlanıyor.
 			uzayliGemisidirX=-uzayliGemisidirX;		
 		}
 		if(uzayliGemisiX<=0) {
@@ -126,8 +145,8 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 			else {
 				uzayGemisiX-=dirUzayX;	
 			}
-			if(uzayGemisiX<10) {		//Bu kontrolu yapmamızın sebebi,uzay gemimiz tam 0. piksele yaklaşmadan bir önceki adımda uzay gemimizin bir kısmı ekran dışına taşıyor,bu hatayı bu kontrolle çözüyoruz.
-				uzayGemisiX=0;			
+			if(uzayGemisiX<10) {	//Bu kontrolu yapmamızın sebebi,uzay gemimiz tam 0. piksele yaklaşmadan bir önceki adımda uzay gemimizin bir kısmı ekran dışına taşıyor,bu hatayı bu kontrolle çözüyoruz.
+				uzayGemisiX=0;
 			}
 			
 		}
@@ -143,6 +162,10 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 				uzayGemisiX=742;
 			}
 		}
+		else if(c==KeyEvent.VK_SPACE) {		//space tuşu ile yeni bir mermi oluşturduk
+			mermiler.add(new Mermi(uzayGemisiX+15,470));		
+			harcananMermi++;
+		}
 	}
 		
 	
@@ -156,6 +179,7 @@ public class Oyun extends JPanel implements KeyListener,ActionListener{
 
 	
 }
+
 
 
 
