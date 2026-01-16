@@ -26,4 +26,21 @@ public class Ufo extends Varlik {
             yonX = 1; // Sağa dön
         }
     }
+
+    // --- Sağlık Sistemi ---
+    private int can = Ayarlar.UFO_MAX_CAN;
+
+    public void hasarAl() {
+        if (can > 0) {
+            can--;
+        }
+    }
+
+    public boolean oluMu() {
+        return can <= 0;
+    }
+
+    public int getCan() {
+        return can;
+    }
 }

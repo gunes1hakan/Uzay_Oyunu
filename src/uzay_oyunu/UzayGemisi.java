@@ -33,4 +33,21 @@ public class UzayGemisi extends Varlik {
     public void dur() {
         this.hareketYonuX = 0;
     }
+
+    // --- Sağlık Sistemi ---
+    private int can = Ayarlar.GEMI_MAX_CAN;
+
+    public void hasarAl() {
+        if (can > 0) {
+            can--;
+        }
+    }
+
+    public boolean oluMu() {
+        return can <= 0;
+    }
+
+    public int getCan() {
+        return can;
+    }
 }

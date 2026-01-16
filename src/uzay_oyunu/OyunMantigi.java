@@ -17,6 +17,7 @@ public class OyunMantigi {
     private Ufo ufo;
     private ArrayList<Mermi> mermiler; // Oyuncunun attığı mermilerin listesi
     private ArrayList<Roket> roketler; // Ufo'nun attığı roketlerin listesi
+    private ArrayList<VurusEfekti> efektler; // Vuruş efektleri (Duman)
     private KaynakYoneticisi kaynaklar; // Görsel kaynaklara erişim için
 
     // İstatistikler
@@ -67,6 +68,7 @@ public class OyunMantigi {
         ufo = new Ufo(Ayarlar.UFO_BASLANGIC_X, Ayarlar.UFO_BASLANGIC_Y, kaynaklar.getUfoResim());
         mermiler = new ArrayList<>();
         roketler = new ArrayList<>();
+        efektler = new ArrayList<>();
 
         gecenSure = 0;
         harcananMermi = 0;
@@ -109,9 +111,20 @@ public class OyunMantigi {
 
         mermileriGuncelle(); // Mermilerin hareketi ve ekran dışına çıkması
         roketleriGuncelle(); // Roketlerin hareketi
+        efektleriGuncelle(); // Efektlerin süresini kontrol et
 
         rastgeleBombala(simdi); // Ufo'nun ateş etme kararı
         carpismalariKontrolEt(); // Mermi-Ufo veya Roket-Gemi çarpışmaları
+    }
+
+    private void efektleriGuncelle() {
+        Iterator<VurusEfekti> it = efektler.iterator();
+        while (it.hasNext()) {
+            VurusEfekti e = it.next();
+            if (!e.isAktif()) {
+                it.remove();
+            }
+        }
     }
 
     /**
@@ -195,9 +208,20 @@ public class OyunMantigi {
         for (Mermi m : mermiler) {
             // Mermi ve Ufo'nun sınırlarını (Rectangle) alıp kesişim var mı bakıyoruz.
             if (CarpismaPolitikasi.kesisir(m.getSinirlar(), 1.0, ufo.getSinirlar(), 1.0)) {
-                ufoPatlamaAktif = true;
-                patlamaBaslangicZamaniMs = System.currentTimeMillis();
-                break; // Tek bir vuruş yeterli
+
+                m.setAktif(false); // Mermi çarpınca yok olsun
+                ufo.hasarAl(); // UFO hasar alsın
+
+                // Canı bittiyse patlasın
+                if (ufo.oluMu()) {
+                    ufoPatlamaAktif = true;
+                    patlamaBaslangicZamaniMs = System.currentTimeMillis();
+                } else {
+                    // Ölmediyse kıvılcım efekti ekle
+                    // Merminin çarptığı yerde çıksın (20 birim yukarı taşı)
+                    efektler.add(new VurusEfekti(m.getX(), m.getY() - 20, kaynaklar.getDumanResim()));
+                }
+                break; // Tek bir vuruş yeterli (bir karenin içinde)
             }
         }
 
@@ -207,8 +231,15 @@ public class OyunMantigi {
             // oranları).
             // Bu sayede "sıyırıp geçme" hissi daha gerçekçi olur.
             if (CarpismaPolitikasi.kesisir(r.getSinirlar(), 0.6, gemi.getSinirlar(), 0.8)) {
-                gemiPatlamaAktif = true;
-                imhaBaslangicZamaniMs = System.currentTimeMillis();
+
+                r.setAktif(false); // Roket yok olsun
+                gemi.hasarAl(); // Gemi hasar alsın
+
+                // Can bittiyse patlasın
+                if (gemi.oluMu()) {
+                    gemiPatlamaAktif = true;
+                    imhaBaslangicZamaniMs = System.currentTimeMillis();
+                }
                 break;
             }
         }
@@ -257,6 +288,10 @@ public class OyunMantigi {
 
     public ArrayList<Roket> getRoketler() {
         return roketler;
+    }
+
+    public ArrayList<VurusEfekti> getEfektler() {
+        return efektler;
     }
 
     public boolean isUfoPatlamaAktif() {

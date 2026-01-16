@@ -18,6 +18,7 @@ public class Ayarlar {
     public static final String PATH_PATLAMA = "PatlamaEfekti.png";
     public static final String PATH_ROKET = "UzayliRoketi.png";
     public static final String PATH_GEMI_PATLAMA = "UzayGemisiPatlamaEfekti.png";
+    public static final String PATH_KIVILCIM = "kivilcim.png";
 
     // --- Oyun Mekaniği Sabitleri ---
     // Oyuncunun (Uzay Gemisi) başlangıç konumu ve hızı
@@ -33,4 +34,9 @@ public class Ayarlar {
     // Mermi ve Roket Hızları
     public static final int MERMI_HIZ = 5; // Oyuncunun ateşlediği merminin yukarı çıkış hızı
     public static final int ROKET_HIZ = 4; // Ufo'nun attığı roketin aşağı iniş hızı
+
+    // --- Yeni Özellikler ---
+    public static final int CAN_BARI_YUKSEKLIK = 50; // Üstteki sağlık barı için ayrılan yükseklik
+    public static final int UFO_MAX_CAN = 10; // Ufo'nun canı
+    public static final int GEMI_MAX_CAN = 4; // Geminin canı
 }

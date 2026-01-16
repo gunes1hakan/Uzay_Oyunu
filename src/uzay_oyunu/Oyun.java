@@ -35,6 +35,11 @@ public class Oyun extends JPanel implements KeyListener, ActionListener {
 		timer.start();
 	}
 
+	// HUD Paneli için gerekli
+	public OyunMantigi getMantik() {
+		return mantik;
+	}
+
 	/**
 	 * Ekranın yeniden çizilmesinden sorumlu metot.
 	 */
@@ -62,6 +67,11 @@ public class Oyun extends JPanel implements KeyListener, ActionListener {
 		// 4. Roketler
 		for (Roket r : mantik.getRoketler()) {
 			r.ciz(g);
+		}
+
+		// 4.5 Vuruş Efektleri (kıvılcım)
+		for (VurusEfekti efekt : mantik.getEfektler()) {
+			efekt.ciz(g);
 		}
 
 		// 5. Patlama Efektleri (En üstte)
