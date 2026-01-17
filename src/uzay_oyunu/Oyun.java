@@ -21,11 +21,13 @@ public class Oyun extends JPanel implements KeyListener, ActionListener {
 	private Timer timer;
 	private OyunMantigi mantik;
 	private KaynakYoneticisi kaynaklar;
+	private SesYoneticisi sesler;
 
 	public Oyun() {
 		// Kaynakları yükler ve mantık motorunu başlatır.
 		kaynaklar = new KaynakYoneticisi();
-		mantik = new OyunMantigi(kaynaklar);
+		sesler = new SesYoneticisi();
+		mantik = new OyunMantigi(kaynaklar, sesler);
 
 		setBackground(Color.black);
 

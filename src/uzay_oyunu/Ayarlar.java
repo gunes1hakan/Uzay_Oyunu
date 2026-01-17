@@ -20,6 +20,12 @@ public class Ayarlar {
     public static final String PATH_GEMI_PATLAMA = "UzayGemisiPatlamaEfekti.png";
     public static final String PATH_KIVILCIM = "kivilcim.png";
 
+    // --- Ses Dosyaları ---
+    public static final String SES_ATES = "ates_sesi.wav";
+    public static final String SES_PATLAMA = "patlama_sesi.wav";
+    public static final String SES_ROKET = "roket_sesi.wav";
+    public static final String SES_KIVILCIM = "metal_vurus.wav"; // Mermi ufoya çarptığında
+
     // --- Oyun Mekaniği Sabitleri ---
     // Oyuncunun (Uzay Gemisi) başlangıç konumu ve hızı
     public static final int GEMI_BASLANGIC_X = 0;

@@ -19,6 +19,7 @@ public class OyunMantigi {
     private ArrayList<Roket> roketler; // Ufo'nun attığı roketlerin listesi
     private ArrayList<VurusEfekti> efektler; // Vuruş efektleri (Duman)
     private KaynakYoneticisi kaynaklar; // Görsel kaynaklara erişim için
+    private SesYoneticisi sesler; // Ses yöneticisi
 
     // İstatistikler
     private int gecenSure = 0; // Oyunun başından beri geçen süre (ms)
@@ -55,8 +56,9 @@ public class OyunMantigi {
     /**
      * Oyun mantığını başlatır ve varlıkları oluşturur.
      */
-    public OyunMantigi(KaynakYoneticisi kaynaklar) {
+    public OyunMantigi(KaynakYoneticisi kaynaklar, SesYoneticisi sesler) {
         this.kaynaklar = kaynaklar;
+        this.sesler = sesler;
         baslat();
     }
 
@@ -194,6 +196,7 @@ public class OyunMantigi {
             int roketY = ufo.getY() + ufo.getYukseklik();
 
             roketler.add(new Roket(roketX, roketY, kaynaklar.getRoketResim()));
+            sesler.oynat(Ayarlar.SES_ROKET); // ROKET SESİ
 
             // Bir sonraki atış zamanını kur
             sonrakiBombaZamaniMs = simdi + rng.nextInt(bombaMaxAralikMs - bombaMinAralikMs + 1) + bombaMinAralikMs;
@@ -216,10 +219,12 @@ public class OyunMantigi {
                 if (ufo.oluMu()) {
                     ufoPatlamaAktif = true;
                     patlamaBaslangicZamaniMs = System.currentTimeMillis();
+                    sesler.oynat(Ayarlar.SES_PATLAMA); // PATLAMA SESİ
                 } else {
                     // Ölmediyse kıvılcım efekti ekle
                     // Merminin çarptığı yerde çıksın (20 birim yukarı taşı)
                     efektler.add(new VurusEfekti(m.getX(), m.getY() - 20, kaynaklar.getDumanResim()));
+                    sesler.oynat(Ayarlar.SES_KIVILCIM); // KIVILCIM/VURUŞ SESİ
                 }
                 break; // Tek bir vuruş yeterli (bir karenin içinde)
             }
@@ -239,6 +244,10 @@ public class OyunMantigi {
                 if (gemi.oluMu()) {
                     gemiPatlamaAktif = true;
                     imhaBaslangicZamaniMs = System.currentTimeMillis();
+                    sesler.oynat(Ayarlar.SES_PATLAMA); // GEMI PATLAMA SESİ (Aynı sesi kullanıyoruz)
+                } else {
+                    // Gemi vurulduğunda da bir efekt/ses olabilir ama şimdilik sadece hasar
+                    sesler.oynat(Ayarlar.SES_KIVILCIM); // Gemiye çarpma sesi
                 }
                 break;
             }
@@ -256,6 +265,7 @@ public class OyunMantigi {
             int mermiY = gemi.getY() - kaynaklar.getMermiResim().getHeight() / 10;
             mermiler.add(new Mermi(mermiX, mermiY, kaynaklar.getMermiResim()));
             harcananMermi++;
+            sesler.oynat(Ayarlar.SES_ATES); // ATEŞ SESİ
         }
     }
 
