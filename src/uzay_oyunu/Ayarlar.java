@@ -19,12 +19,14 @@ public class Ayarlar {
     public static final String PATH_ROKET = "UzayliRoketi.png";
     public static final String PATH_GEMI_PATLAMA = "UzayGemisiPatlamaEfekti.png";
     public static final String PATH_KIVILCIM = "kivilcim.png";
+    public static final String PATH_GEMI_VURUS = "gemi_vurus.png";
 
     // --- Ses Dosyaları ---
     public static final String SES_ATES = "ates_sesi.wav";
-    public static final String SES_PATLAMA = "patlama_sesi.wav";
+    public static final String SES_PATLAMA = "yok_olus.wav"; // Gemi veya Ufo yok olduğunda
     public static final String SES_ROKET = "roket_sesi.wav";
     public static final String SES_KIVILCIM = "metal_vurus.wav"; // Mermi ufoya çarptığında
+    public static final String SES_BOMBA = "bomba_sesi.wav"; // Roket gemiye çarptığında
 
     // --- Oyun Mekaniği Sabitleri ---
     // Oyuncunun (Uzay Gemisi) başlangıç konumu ve hızı
@@ -35,11 +37,11 @@ public class Ayarlar {
     // Düşmanın (UFO) başlangıç konumu ve hızı
     public static final int UFO_BASLANGIC_X = 0;
     public static final int UFO_BASLANGIC_Y = 0;
-    public static final int UFO_HIZ = 2; // Ufo'nun yatay hareket hızı
+    public static final int UFO_HIZ = 2; // Ufo'nun yatay hareket hızı (FPS dengesi için 2->6)
 
     // Mermi ve Roket Hızları
-    public static final int MERMI_HIZ = 5; // Oyuncunun ateşlediği merminin yukarı çıkış hızı
-    public static final int ROKET_HIZ = 4; // Ufo'nun attığı roketin aşağı iniş hızı
+    public static final int MERMI_HIZ = 5; // Oyuncunun ateşlediği merminin yukarı çıkış hızı (FPS dengesi için 5->15)
+    public static final int ROKET_HIZ = 4; // Ufo'nun attığı roketin aşağı iniş hızı (FPS dengesi için 4->12)
 
     // --- Yeni Özellikler ---
     public static final int CAN_BARI_YUKSEKLIK = 50; // Üstteki sağlık barı için ayrılan yükseklik

@@ -34,6 +34,7 @@ public class OyunMantigi {
     private long sonrakiBombaZamaniMs = 0;
     private final int bombaMinAralikMs = 1500; // Ufo en az 1.5 saniyede bir ateş eder
     private final int bombaMaxAralikMs = 2200; // Ufo en geç 2.2 saniyede bir ateş eder
+    private long sonRoketGorulmeZamaniMs = 0; // Ses döngüsünü kesintisiz yapmak için
 
     // --- Patlama Animasyonu Yönetimi ---
     // Patlamalar "fire-and-forget" değildir, oyunun akışını donduran özel
@@ -113,6 +114,7 @@ public class OyunMantigi {
 
         mermileriGuncelle(); // Mermilerin hareketi ve ekran dışına çıkması
         roketleriGuncelle(); // Roketlerin hareketi
+
         efektleriGuncelle(); // Efektlerin süresini kontrol et
 
         rastgeleBombala(simdi); // Ufo'nun ateş etme kararı
@@ -154,6 +156,7 @@ public class OyunMantigi {
             if (adim >= (ufoMu ? patlamaMaksAdim : imhaMaksAdim)) {
                 oyunBitti = true;
                 kazandi = ufoMu; // Eğer Ufo patladıysa oyuncu kazanmışdır.
+                sesler.tumSesleriDurdur(Ayarlar.SES_PATLAMA);
             }
         }
     }
@@ -195,8 +198,15 @@ public class OyunMantigi {
             int roketX = ufo.getX() + (ufo.getGenislik() / 2) - (kaynaklar.getRoketResim().getWidth() / 10 / 2);
             int roketY = ufo.getY() + ufo.getYukseklik();
 
-            roketler.add(new Roket(roketX, roketY, kaynaklar.getRoketResim()));
-            sesler.oynat(Ayarlar.SES_ROKET); // ROKET SESİ
+            // Roketi oluştur
+            Roket yeniRoket = new Roket(roketX, roketY, kaynaklar.getRoketResim());
+
+            // Rokete özel ses ata ve başlat
+            yeniRoket.setSesKlibi(sesler.loopBaslatGetir(Ayarlar.SES_ROKET));
+
+            roketler.add(yeniRoket);
+            // sesler.oynat(Ayarlar.SES_ROKET); // TEK SEFERLİK OYNATMA İPTAL. ARTIK
+            // DÖNGÜSEL ÇALACAK.
 
             // Bir sonraki atış zamanını kur
             sonrakiBombaZamaniMs = simdi + rng.nextInt(bombaMaxAralikMs - bombaMinAralikMs + 1) + bombaMinAralikMs;
@@ -246,8 +256,10 @@ public class OyunMantigi {
                     imhaBaslangicZamaniMs = System.currentTimeMillis();
                     sesler.oynat(Ayarlar.SES_PATLAMA); // GEMI PATLAMA SESİ (Aynı sesi kullanıyoruz)
                 } else {
-                    // Gemi vurulduğunda da bir efekt/ses olabilir ama şimdilik sadece hasar
-                    sesler.oynat(Ayarlar.SES_KIVILCIM); // Gemiye çarpma sesi
+                    // Gemi vurulduğunda da bir efekt/ses olabilir
+                    // Konum ve ayarlar artık tamamen GemiVurusEfekti sınıfı içinde
+                    efektler.add(new GemiVurusEfekti(r, kaynaklar.getGemiVurusResim()));
+                    sesler.oynat(Ayarlar.SES_BOMBA); // Gemiye çarpma sesi (Bomba)
                 }
                 break;
             }

@@ -7,11 +7,11 @@ import java.awt.image.BufferedImage;
  * Mermi bir hedefe çarptığında oluşan kısa süreli görsel efekt (kıvılcım).
  */
 public class VurusEfekti {
-    private int x, y; // Efektin konumu
-    private long baslangicZamani; // Efektin başladığı zaman
-    private int sureMs = 150; // Efektin ekranda kalma süresi (Kısa sürsün, kıvılcım gibi)
-    private BufferedImage resim;
-    private int genislik, yukseklik;
+    protected int x, y; // Efektin konumu
+    protected long baslangicZamani; // Efektin başladığı zaman
+    protected int sureMs = 150; // Efektin ekranda kalma süresi (Kısa sürsün, kıvılcım gibi)
+    protected BufferedImage resim;
+    protected int genislik, yukseklik;
 
     public VurusEfekti(int x, int y, BufferedImage resim) {
         this.x = x;
