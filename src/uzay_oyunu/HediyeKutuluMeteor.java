@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
  * NOT: Bu sınıf şimdilik kullanılmaz. Klon olayı tanımlandığında aktif
  * edilecek.
  */
-public class HediyeKutusuluMeteor extends Meteor {
+public class HediyeKutuluMeteor extends Meteor {
 
     private int yatayYon; // +1 = sağa (sol köşeden), -1 = sola (sağ köşeden)
     private int yatayHiz;
@@ -24,7 +24,7 @@ public class HediyeKutusuluMeteor extends Meteor {
      *                   false ise sağ üst köşeden başlar (güneybatı yönünde)
      * @param resim      Meteorun görseli (sol veya sağ versiyonu)
      */
-    public HediyeKutusuluMeteor(boolean solKoseden, BufferedImage resim) {
+    public HediyeKutuluMeteor(boolean solKoseden, BufferedImage resim) {
         super(0, 0, resim); // Geçici konum, aşağıda düzeltilecek
 
         // Yatay yön ve hız ayarla

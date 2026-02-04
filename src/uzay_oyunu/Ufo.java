@@ -43,4 +43,13 @@ public class Ufo extends Varlik {
     public int getCan() {
         return can;
     }
+
+    /**
+     * UFO'nun hareket yönünü ayarlar.
+     * 
+     * @param yon 1 = sağa, -1 = sola
+     */
+    public void setYonX(int yon) {
+        this.yonX = yon;
+    }
 }

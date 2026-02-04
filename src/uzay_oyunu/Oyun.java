@@ -55,6 +55,11 @@ public class Oyun extends JPanel implements KeyListener, ActionListener {
 		// 1. Ufo (En arkada)
 		mantik.getUfo().ciz(g);
 
+		// 1.5 Klon Ufo (varsa)
+		if (mantik.getUfoKlon() != null && mantik.getUfoKlon().isAktif()) {
+			mantik.getUfoKlon().ciz(g);
+		}
+
 		// 2. Gemi (Eğer patlamıyorsa çiz)
 		// Patlama efekti gemiyi tam örtmediği için, patlama anında gemiyi gizliyoruz.
 		if (!mantik.isGemiPatlamaAktif()) {

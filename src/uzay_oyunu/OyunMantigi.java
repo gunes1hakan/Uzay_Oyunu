@@ -1,6 +1,5 @@
 package uzay_oyunu;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -15,6 +14,7 @@ public class OyunMantigi {
     // Oyun Varlıkları
     private UzayGemisi gemi;
     private Ufo ufo;
+    private Ufo ufoKlon = null; // Klonlanmış UFO
     private ArrayList<Mermi> mermiler; // Oyuncunun attığı mermilerin listesi
     private ArrayList<Roket> roketler; // Ufo'nun attığı roketlerin listesi
     private ArrayList<VurusEfekti> efektler; // Vuruş efektleri (Duman)
@@ -34,7 +34,6 @@ public class OyunMantigi {
     private long sonrakiBombaZamaniMs = 0;
     private final int bombaMinAralikMs = 1500; // Ufo en az 1.5 saniyede bir ateş eder
     private final int bombaMaxAralikMs = 2200; // Ufo en geç 2.2 saniyede bir ateş eder
-    private long sonRoketGorulmeZamaniMs = 0; // Ses döngüsünü kesintisiz yapmak için
 
     // --- Patlama Animasyonu Yönetimi ---
     // Patlamalar "fire-and-forget" değildir, oyunun akışını donduran özel
@@ -53,6 +52,11 @@ public class OyunMantigi {
     private final int imhaMaksAdim = 10;
     private long imhaBaslangicZamaniMs = 0;
     private final int imhaArtisAraligiMs = 100;
+
+    // --- Klon Sistemi ---
+    private boolean klonlandiMi = false;
+    private static final int KLON_ZAMANI_MS = 10000; // 10 saniye
+    private static final int KLON_MERKEZ_X = 400; // Ekran ortası
 
     /**
      * Oyun mantığını başlatır ve varlıkları oluşturur.
@@ -111,6 +115,11 @@ public class OyunMantigi {
 
         gemi.guncelle(); // Geminin hareketi
         ufo.guncelle(); // Ufo'nun hareketi (Sınır kontrolü sınıfın içinde yapılır)
+        if (ufoKlon != null && ufoKlon.isAktif()) {
+            ufoKlon.guncelle(); // Klon UFO hareketi
+        }
+
+        klonKontrolEt(); // UFO klonlama kontrolü
 
         mermileriGuncelle(); // Mermilerin hareketi ve ekran dışına çıkması
         roketleriGuncelle(); // Roketlerin hareketi
@@ -127,6 +136,26 @@ public class OyunMantigi {
             VurusEfekti e = it.next();
             if (!e.isAktif()) {
                 it.remove();
+            }
+        }
+    }
+
+    /**
+     * UFO klonlama koşullarını kontrol eder.
+     * 10 saniye geçtikten sonra UFO merkeze gelirse klonlanır.
+     */
+    private void klonKontrolEt() {
+        if (!klonlandiMi && gecenSure >= KLON_ZAMANI_MS) {
+            // UFO merkeze geldiğinde klonla (±10 piksel tolerans)
+            if (ufo.getX() >= KLON_MERKEZ_X - 10 && ufo.getX() <= KLON_MERKEZ_X + 10) {
+                // Klon oluştur (aynı konumda)
+                ufoKlon = new Ufo(ufo.getX(), ufo.getY(), kaynaklar.getUfoResim());
+
+                // Yönleri ayarla: orijinal sağa, klon sola
+                ufo.setYonX(1);
+                ufoKlon.setYonX(-1);
+
+                klonlandiMi = true;
             }
         }
     }
@@ -344,5 +373,13 @@ public class OyunMantigi {
 
     public int getGecenSure() {
         return gecenSure;
+    }
+
+    public Ufo getUfoKlon() {
+        return ufoKlon;
+    }
+
+    public boolean isKlonlandiMi() {
+        return klonlandiMi;
     }
 }
