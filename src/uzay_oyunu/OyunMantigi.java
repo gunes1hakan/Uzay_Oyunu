@@ -17,6 +17,7 @@ public class OyunMantigi {
     private Ufo ufoKlon = null; // Klonlanmış UFO
     private ArrayList<Mermi> mermiler; // Oyuncunun attığı mermilerin listesi
     private ArrayList<Roket> roketler; // Ufo'nun attığı roketlerin listesi
+    private ArrayList<Meteor> meteorlar; // Ekrandan düşen meteorlar
     private ArrayList<VurusEfekti> efektler; // Vuruş efektleri (Duman)
     private KaynakYoneticisi kaynaklar; // Görsel kaynaklara erişim için
     private SesYoneticisi sesler; // Ses yöneticisi
@@ -59,6 +60,9 @@ public class OyunMantigi {
     private static final int KLON_MERKEZ_X = 400; // Ekran ortası
     private long klonSonrakiBombaZamaniMs = 0; // Klon için ayrı bomba zamanlayıcısı
 
+    // --- Meteor Spawn Sistemi ---
+    private long sonrakiMeteorZamaniMs = 0;
+
     /**
      * Oyun mantığını başlatır ve varlıkları oluşturur.
      */
@@ -76,6 +80,7 @@ public class OyunMantigi {
         ufo = new Ufo(Ayarlar.UFO_BASLANGIC_X, Ayarlar.UFO_BASLANGIC_Y, kaynaklar.getUfoResim());
         mermiler = new ArrayList<>();
         roketler = new ArrayList<>();
+        meteorlar = new ArrayList<>();
         efektler = new ArrayList<>();
 
         gecenSure = 0;
@@ -124,10 +129,12 @@ public class OyunMantigi {
 
         mermileriGuncelle(); // Mermilerin hareketi ve ekran dışına çıkması
         roketleriGuncelle(); // Roketlerin hareketi
+        meteorlariGuncelle(); // Meteorların hareketi
 
         efektleriGuncelle(); // Efektlerin süresini kontrol et
 
         rastgeleBombala(simdi); // Ufo'nun ateş etme kararı
+        rastgeleMeteorSpawn(simdi); // Meteor spawn kontrolü
         carpismalariKontrolEt(); // Mermi-Ufo veya Roket-Gemi çarpışmaları
     }
 
@@ -209,6 +216,43 @@ public class OyunMantigi {
             r.guncelle();
             if (!r.isAktif())
                 it.remove();
+        }
+    }
+
+    private void meteorlariGuncelle() {
+        Iterator<Meteor> it = meteorlar.iterator();
+        while (it.hasNext()) {
+            Meteor m = it.next();
+            m.guncelle();
+            if (!m.isAktif())
+                it.remove();
+        }
+    }
+
+    /**
+     * Belirli aralıklarla rastgele pozisyonda meteor spawn eder.
+     */
+    private void rastgeleMeteorSpawn(long simdi) {
+        // İlk spawn zamanını belirle
+        if (sonrakiMeteorZamaniMs == 0) {
+            sonrakiMeteorZamaniMs = simdi + rng.nextInt(
+                    Ayarlar.METEOR_SPAWN_MAX_MS - Ayarlar.METEOR_SPAWN_MIN_MS + 1) + Ayarlar.METEOR_SPAWN_MIN_MS;
+            return;
+        }
+
+        // Zamanı geldiyse meteor oluştur
+        if (simdi >= sonrakiMeteorZamaniMs) {
+            // Rastgele X konumu (ekran genişliği içinde, meteor genişliğini hesaba katarak)
+            int meteorGenislik = kaynaklar.getMeteorResim().getWidth() / 4; // Resim boyutu /4
+            int rastgeleX = rng.nextInt(Ayarlar.EKRAN_GENISLIK - meteorGenislik);
+
+            // Meteor ekranın üstünden başlar (Y = -yükseklik veya 0)
+            Meteor yeniMeteor = new Meteor(rastgeleX, -20, kaynaklar.getMeteorResim());
+            meteorlar.add(yeniMeteor);
+
+            // Bir sonraki spawn zamanını kur
+            sonrakiMeteorZamaniMs = simdi + rng.nextInt(
+                    Ayarlar.METEOR_SPAWN_MAX_MS - Ayarlar.METEOR_SPAWN_MIN_MS + 1) + Ayarlar.METEOR_SPAWN_MIN_MS;
         }
     }
 
@@ -422,5 +466,9 @@ public class OyunMantigi {
 
     public boolean isKlonlandiMi() {
         return klonlandiMi;
+    }
+
+    public ArrayList<Meteor> getMeteorlar() {
+        return meteorlar;
     }
 }

@@ -76,6 +76,11 @@ public class Oyun extends JPanel implements KeyListener, ActionListener {
 			r.ciz(g);
 		}
 
+		// 4.25 Meteorlar
+		for (Meteor m : mantik.getMeteorlar()) {
+			m.ciz(g);
+		}
+
 		// 4.5 Vuruş Efektleri (kıvılcım)
 		for (VurusEfekti efekt : mantik.getEfektler()) {
 			efekt.ciz(g);

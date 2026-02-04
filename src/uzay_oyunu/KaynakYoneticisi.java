@@ -19,6 +19,7 @@ public class KaynakYoneticisi {
     private BufferedImage gemiPatlamaResim;
     private BufferedImage dumanResim;
     private BufferedImage gemiVurusResim;
+    private BufferedImage meteorResim;
 
     public KaynakYoneticisi() {
         try {
@@ -34,6 +35,7 @@ public class KaynakYoneticisi {
             gemiPatlamaResim = ImageIO.read(dosyaBul(Ayarlar.PATH_GEMI_PATLAMA));
             dumanResim = ImageIO.read(dosyaBul(Ayarlar.PATH_KIVILCIM));
             gemiVurusResim = ImageIO.read(dosyaBul(Ayarlar.PATH_GEMI_VURUS));
+            meteorResim = ImageIO.read(dosyaBul(Ayarlar.PATH_METEOR));
 
         } catch (IOException e) {
             System.err.println("Kaynaklar yüklenirken hata oluştu: " + e.getMessage());
@@ -85,5 +87,9 @@ public class KaynakYoneticisi {
 
     public BufferedImage getGemiVurusResim() {
         return gemiVurusResim;
+    }
+
+    public BufferedImage getMeteorResim() {
+        return meteorResim;
     }
 }
