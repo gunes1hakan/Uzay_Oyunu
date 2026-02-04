@@ -52,4 +52,11 @@ public class Ayarlar {
     public static final String PATH_METEOR = "meteor.png";
     public static final int METEOR_HIZ = 3; // Roketlerden biraz daha yavaş
     public static final int METEOR_CAN = 3; // Patlatmak için gereken mermi sayısı
+
+    // --- Hediye Meteor Ayarları ---
+    public static final String PATH_METEOR_HEDIYE_SOL = "meteor_hediye_sol.png";
+    public static final String PATH_METEOR_HEDIYE_SAG = "meteor_hediye_sag.png";
+    public static final int HEDIYE_METEOR_HIZ_Y = 2; // Dikey hız
+    public static final int HEDIYE_METEOR_HIZ_X = 3; // Yatay hız (daha hızlı - ekran oranına uygun)
+    public static final int HEDIYE_METEOR_CAN = 5; // Normal meteordan güçlü
 }

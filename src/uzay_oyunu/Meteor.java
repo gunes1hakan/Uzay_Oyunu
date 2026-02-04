@@ -3,7 +3,6 @@ package uzay_oyunu;
 import java.awt.image.BufferedImage;
 
 /**
- * UFO klonu tarafından fırlatılan meteor sınıfı.
  * Yukarıdan aşağıya doğru düz hareket eder.
  * Belirli sayıda mermi ile patlatılabilir.
  * 
@@ -12,7 +11,7 @@ import java.awt.image.BufferedImage;
  */
 public class Meteor extends Varlik {
 
-    private int can;
+    protected int can;
 
     public Meteor(int x, int y, BufferedImage resim) {
         super(x, y, resim);
