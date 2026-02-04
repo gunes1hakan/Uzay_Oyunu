@@ -36,25 +36,34 @@ public class SaglikPaneli extends JPanel implements ActionListener {
 
         Ufo ufo = mantik.getUfo();
         UzayGemisi gemi = mantik.getGemi();
+        Ufo klon = mantik.getUfoKlon();
 
         if (ufo == null || gemi == null)
             return;
 
-        int barGenislik = 300;
-        int barYukseklik = 20;
-        int araBosluk = 50;
+        // Klon aktif mi kontrol et
+        boolean klonAktif = klon != null && klon.isAktif() && !klon.oluMu();
 
-        // --- 1. SOL TARAFA GEMİ CANI (PLAYER) ---
-        int gemiBarX = (Ayarlar.EKRAN_GENISLIK - (barGenislik * 2 + araBosluk)) / 2;
+        // Bar boyutları (klon varsa daha dar barlar)
+        int barGenislik = klonAktif ? 200 : 300;
+        int barYukseklik = 20;
+        int araBosluk = klonAktif ? 30 : 50;
+
+        // Toplam genişliği hesapla
+        int toplamGenislik = klonAktif
+                ? (barGenislik * 3 + araBosluk * 2) // 3 bar
+                : (barGenislik * 2 + araBosluk); // 2 bar
+
+        int baslangicX = (Ayarlar.EKRAN_GENISLIK - toplamGenislik) / 2;
         int barY = (Ayarlar.CAN_BARI_YUKSEKLIK - barYukseklik) / 2;
 
-        drawBar(g, gemiBarX, barY, barGenislik, barYukseklik, gemi.getCan(), Ayarlar.GEMI_MAX_CAN, "PLAYER",
-                Color.BLUE);
+        // --- 1. SOL TARAFA GEMİ CANI (PLAYER) ---
+        drawBar(g, baslangicX, barY, barGenislik, barYukseklik,
+                gemi.getCan(), Ayarlar.GEMI_MAX_CAN, "PLAYER", Color.BLUE);
 
-        // --- 2. SAĞ TARAFA UFO CANI (ENEMY) ---
-        int ufoBarX = gemiBarX + barGenislik + araBosluk;
+        // --- 2. ORTAYA UFO CANI (ENEMY) ---
+        int ufoBarX = baslangicX + barGenislik + araBosluk;
 
-        // UFO rengi dinamik olsun
         Color ufoRenk = Color.GREEN;
         double ufoOran = (double) ufo.getCan() / Ayarlar.UFO_MAX_CAN;
         if (ufoOran <= 0.3)
@@ -62,7 +71,23 @@ public class SaglikPaneli extends JPanel implements ActionListener {
         else if (ufoOran <= 0.6)
             ufoRenk = Color.YELLOW;
 
-        drawBar(g, ufoBarX, barY, barGenislik, barYukseklik, ufo.getCan(), Ayarlar.UFO_MAX_CAN, "ENEMY", ufoRenk);
+        drawBar(g, ufoBarX, barY, barGenislik, barYukseklik,
+                ufo.getCan(), Ayarlar.UFO_MAX_CAN, "ENEMY", ufoRenk);
+
+        // --- 3. SAĞ TARAFA KLON CANI (CLONE) - Sadece aktifse ---
+        if (klonAktif) {
+            int klonBarX = ufoBarX + barGenislik + araBosluk;
+
+            Color klonRenk = Color.ORANGE;
+            double klonOran = (double) klon.getCan() / Ayarlar.UFO_MAX_CAN;
+            if (klonOran <= 0.3)
+                klonRenk = Color.RED;
+            else if (klonOran <= 0.6)
+                klonRenk = Color.YELLOW;
+
+            drawBar(g, klonBarX, barY, barGenislik, barYukseklik,
+                    klon.getCan(), Ayarlar.UFO_MAX_CAN, "CLONE", klonRenk);
+        }
     }
 
     private void drawBar(Graphics g, int x, int y, int w, int h, int can, int maxCan, String label, Color renk) {
