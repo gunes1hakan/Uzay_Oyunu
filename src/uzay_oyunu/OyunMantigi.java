@@ -57,6 +57,7 @@ public class OyunMantigi {
     private boolean klonlandiMi = false;
     private static final int KLON_ZAMANI_MS = 10000; // 10 saniye
     private static final int KLON_MERKEZ_X = 400; // Ekran ortası
+    private long klonSonrakiBombaZamaniMs = 0; // Klon için ayrı bomba zamanlayıcısı
 
     /**
      * Oyun mantığını başlatır ve varlıkları oluşturur.
@@ -212,20 +213,37 @@ public class OyunMantigi {
     }
 
     /**
-     * Ufo'nun belirli aralıklarla rastgele roket atmasını sağlar.
+     * UFO'ların belirli aralıklarla rastgele roket atmasını sağlar.
      */
     private void rastgeleBombala(long simdi) {
+        // Orijinal UFO ateş etsin
+        if (!ufo.oluMu()) {
+            sonrakiBombaZamaniMs = ufoAtesEt(ufo, simdi, sonrakiBombaZamaniMs);
+        }
+
+        // Klon varsa ve hayattaysa o da ateş etsin
+        if (ufoKlon != null && ufoKlon.isAktif() && !ufoKlon.oluMu()) {
+            klonSonrakiBombaZamaniMs = ufoAtesEt(ufoKlon, simdi, klonSonrakiBombaZamaniMs);
+        }
+    }
+
+    /**
+     * Belirli bir UFO'nun roket atmasını yönetir.
+     * 
+     * @return Güncellenmiş sonraki bomba zamanı
+     */
+    private long ufoAtesEt(Ufo hedefUfo, long simdi, long sonrakiZaman) {
         // İlk atış zamanını belirle
-        if (sonrakiBombaZamaniMs == 0) {
-            sonrakiBombaZamaniMs = simdi + rng.nextInt(bombaMaxAralikMs - bombaMinAralikMs + 1) + bombaMinAralikMs;
-            return;
+        if (sonrakiZaman == 0) {
+            return simdi + rng.nextInt(bombaMaxAralikMs - bombaMinAralikMs + 1) + bombaMinAralikMs;
         }
 
         // Zamanı geldiyse ateş et
-        if (simdi >= sonrakiBombaZamaniMs) {
-            // Roketi Ufo'nun tam ortasından ve altından çıkart
-            int roketX = ufo.getX() + (ufo.getGenislik() / 2) - (kaynaklar.getRoketResim().getWidth() / 10 / 2);
-            int roketY = ufo.getY() + ufo.getYukseklik();
+        if (simdi >= sonrakiZaman) {
+            // Roketi UFO'nun tam ortasından ve altından çıkart
+            int roketX = hedefUfo.getX() + (hedefUfo.getGenislik() / 2)
+                    - (kaynaklar.getRoketResim().getWidth() / 10 / 2);
+            int roketY = hedefUfo.getY() + hedefUfo.getYukseklik();
 
             // Roketi oluştur
             Roket yeniRoket = new Roket(roketX, roketY, kaynaklar.getRoketResim());
@@ -236,8 +254,9 @@ public class OyunMantigi {
             roketler.add(yeniRoket);
 
             // Bir sonraki atış zamanını kur
-            sonrakiBombaZamaniMs = simdi + rng.nextInt(bombaMaxAralikMs - bombaMinAralikMs + 1) + bombaMinAralikMs;
+            return simdi + rng.nextInt(bombaMaxAralikMs - bombaMinAralikMs + 1) + bombaMinAralikMs;
         }
+        return sonrakiZaman;
     }
 
     /**
@@ -246,24 +265,46 @@ public class OyunMantigi {
     private void carpismalariKontrolEt() {
         // 1. Senaryo: Bizim mermimiz Ufo'yu vurdu mu?
         for (Mermi m : mermiler) {
-            // Mermi ve Ufo'nun sınırlarını (Rectangle) alıp kesişim var mı bakıyoruz.
-            if (CarpismaPolitikasi.kesisir(m.getSinirlar(), 1.0, ufo.getSinirlar(), 1.0)) {
+            if (!m.isAktif())
+                continue;
 
-                m.setAktif(false); // Mermi çarpınca yok olsun
-                ufo.hasarAl(); // UFO hasar alsın
+            // Orijinal UFO kontrolü
+            if (!ufo.oluMu() && CarpismaPolitikasi.kesisir(m.getSinirlar(), 1.0, ufo.getSinirlar(), 1.0)) {
+                m.setAktif(false);
+                ufo.hasarAl();
 
-                // Canı bittiyse patlasın
                 if (ufo.oluMu()) {
-                    ufoPatlamaAktif = true;
-                    patlamaBaslangicZamaniMs = System.currentTimeMillis();
-                    sesler.oynat(Ayarlar.SES_PATLAMA); // PATLAMA SESİ
+                    // Hem orijinal hem klon öldüyse oyun biter
+                    if (ufoKlon == null || ufoKlon.oluMu()) {
+                        ufoPatlamaAktif = true;
+                        patlamaBaslangicZamaniMs = System.currentTimeMillis();
+                        sesler.oynat(Ayarlar.SES_PATLAMA);
+                    }
                 } else {
-                    // Ölmediyse kıvılcım efekti ekle
-                    // Merminin çarptığı yerde çıksın (20 birim yukarı taşı)
                     efektler.add(new VurusEfekti(m.getX(), m.getY() - 20, kaynaklar.getDumanResim()));
-                    sesler.oynat(Ayarlar.SES_KIVILCIM); // KIVILCIM/VURUŞ SESİ
+                    sesler.oynat(Ayarlar.SES_KIVILCIM);
                 }
-                break; // Tek bir vuruş yeterli (bir karenin içinde)
+                continue;
+            }
+
+            // Klon UFO kontrolü
+            if (ufoKlon != null && ufoKlon.isAktif() && !ufoKlon.oluMu()
+                    && CarpismaPolitikasi.kesisir(m.getSinirlar(), 1.0, ufoKlon.getSinirlar(), 1.0)) {
+                m.setAktif(false);
+                ufoKlon.hasarAl();
+
+                if (ufoKlon.oluMu()) {
+                    // Klon öldü, ama orijinal hala hayattaysa oyun devam eder
+                    ufoKlon.setAktif(false);
+                    if (ufo.oluMu()) {
+                        ufoPatlamaAktif = true;
+                        patlamaBaslangicZamaniMs = System.currentTimeMillis();
+                        sesler.oynat(Ayarlar.SES_PATLAMA);
+                    }
+                } else {
+                    efektler.add(new VurusEfekti(m.getX(), m.getY() - 20, kaynaklar.getDumanResim()));
+                    sesler.oynat(Ayarlar.SES_KIVILCIM);
+                }
             }
         }
 
