@@ -37,14 +37,19 @@ public class Ayarlar {
     // Düşmanın (UFO) başlangıç konumu ve hızı
     public static final int UFO_BASLANGIC_X = 0;
     public static final int UFO_BASLANGIC_Y = 0;
-    public static final int UFO_HIZ = 2; // Ufo'nun yatay hareket hızı (FPS dengesi için 2->6)
+    public static final int UFO_HIZ = 2; // Ufo'nun yatay hareket hızı
 
     // Mermi ve Roket Hızları
-    public static final int MERMI_HIZ = 5; // Oyuncunun ateşlediği merminin yukarı çıkış hızı (FPS dengesi için 5->15)
-    public static final int ROKET_HIZ = 4; // Ufo'nun attığı roketin aşağı iniş hızı (FPS dengesi için 4->12)
+    public static final int MERMI_HIZ = 5; // Oyuncunun ateşlediği merminin yukarı çıkış hızı
+    public static final int ROKET_HIZ = 4; // Ufo'nun attığı roketin aşağı iniş hızı
 
     // --- Yeni Özellikler ---
     public static final int CAN_BARI_YUKSEKLIK = 50; // Üstteki sağlık barı için ayrılan yükseklik
     public static final int UFO_MAX_CAN = 10; // Ufo'nun canı
     public static final int GEMI_MAX_CAN = 4; // Geminin canı
+
+    // --- Meteor Ayarları ---
+    public static final String PATH_METEOR = "meteor.png";
+    public static final int METEOR_HIZ = 3; // Roketlerden biraz daha yavaş
+    public static final int METEOR_CAN = 3; // Patlatmak için gereken mermi sayısı
 }

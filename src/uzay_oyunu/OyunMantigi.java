@@ -205,8 +205,6 @@ public class OyunMantigi {
             yeniRoket.setSesKlibi(sesler.loopBaslatGetir(Ayarlar.SES_ROKET));
 
             roketler.add(yeniRoket);
-            // sesler.oynat(Ayarlar.SES_ROKET); // TEK SEFERLİK OYNATMA İPTAL. ARTIK
-            // DÖNGÜSEL ÇALACAK.
 
             // Bir sonraki atış zamanını kur
             sonrakiBombaZamaniMs = simdi + rng.nextInt(bombaMaxAralikMs - bombaMinAralikMs + 1) + bombaMinAralikMs;
