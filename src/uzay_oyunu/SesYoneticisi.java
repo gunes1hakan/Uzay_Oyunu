@@ -26,6 +26,7 @@ public class SesYoneticisi {
     private static final float GAIN_KIVILCIM = -12.0f;
     private static final float GAIN_MERMI = -12.0f;
     private static final float GAIN_BOMBA = -8.0f;
+    private static final float GAIN_METEOR = -6.0f; // Meteor çarpma sesi
 
     public SesYoneticisi() {
         sesHavuzlari = new HashMap<>();
@@ -36,6 +37,7 @@ public class SesYoneticisi {
         sesYukle(Ayarlar.SES_KIVILCIM, 4, GAIN_KIVILCIM);
         sesYukle(Ayarlar.SES_ROKET, 20, GAIN_ROKET);
         sesYukle(Ayarlar.SES_BOMBA, 3, GAIN_BOMBA);
+        sesYukle(Ayarlar.SES_METEOR, 3, GAIN_METEOR);
     }
 
     private void sesYukle(String dosyaAdi, int kopyaSayisi, float desibel) {

@@ -27,6 +27,7 @@ public class Ayarlar {
     public static final String SES_ROKET = "roket_sesi.wav";
     public static final String SES_KIVILCIM = "metal_vurus.wav"; // Mermi ufoya çarptığında
     public static final String SES_BOMBA = "bomba_sesi.wav"; // Roket gemiye çarptığında
+    public static final String SES_METEOR = "meteor_sesi.wav"; // Meteor spawn olduğunda
 
     // --- Oyun Mekaniği Sabitleri ---
     // Oyuncunun (Uzay Gemisi) başlangıç konumu ve hızı

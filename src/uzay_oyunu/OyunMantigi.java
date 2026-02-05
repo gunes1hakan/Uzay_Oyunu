@@ -352,7 +352,31 @@ public class OyunMantigi {
             }
         }
 
-        // 2. Senaryo: Ufo'nun roketi bizi vurdu mu?
+        // 2. Senaryo: Meteor bizi vurdu mu?
+        for (Meteor m : meteorlar) {
+            if (!m.isAktif())
+                continue;
+
+            // Meteor-Gemi çarpışma kontrolü
+            if (CarpismaPolitikasi.kesisir(m.getSinirlar(), 0.7, gemi.getSinirlar(), 0.8)) {
+                m.setAktif(false); // Meteor yok olsun
+                gemi.hasarAl(); // Gemi hasar alsın
+                sesler.oynat(Ayarlar.SES_METEOR); // Meteor çarpma sesi
+
+                // Can bittiyse patlasın
+                if (gemi.oluMu()) {
+                    gemiPatlamaAktif = true;
+                    imhaBaslangicZamaniMs = System.currentTimeMillis();
+                    sesler.oynat(Ayarlar.SES_PATLAMA);
+                } else {
+                    // Vuruş efekti meteor konumunda göster
+                    efektler.add(new VurusEfekti(m.getX() + m.getGenislik() / 2, m.getY() + m.getYukseklik(),
+                            kaynaklar.getGemiVurusResim()));
+                }
+            }
+        }
+
+        // 3. Senaryo: Ufo'nun roketi bizi vurdu mu?
         for (Roket r : roketler) {
             // Çarpışma hassasiyetini artırmak için sınırlar daraltılır (0.6 ve 0.8
             // oranları).
